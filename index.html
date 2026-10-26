@@ -19,7 +19,8 @@ addEventListener('keydown',e=>{
   if(['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
   if(!keys[e.code])pressed[e.code]=1;keys[e.code]=1;
   // 隠しコマンド: ↑↑↓↓→←→← で10秒間無敵 / ↑→←↓ で10秒間ハンマー強化
-  if(!e.repeat){cmd=(cmd+e.code+',').split(',').slice(-12).join(',');
+  // コマンドは WASD でも打てる (W=↑ A=← S=↓ D=→)
+  if(!e.repeat){cmd=(cmd+(WASD[e.code]||e.code)+',').split(',').slice(-12).join(',');
     // 難易度設定: →↓←↑→↓←↑ で難易度3 (もう一度打つと元に戻る)。タイトルでもゲーム中でもOK
     if(cmd.endsWith(CMD_HARD)){hard=!hard;hardCyc=0;cmd='';if(!hard&&P){P.star=0;P.curse=0}}
     else if(state=='play'){
@@ -32,6 +33,7 @@ const CHEAT_STAR='ArrowUp,ArrowUp,ArrowDown,ArrowDown,ArrowRight,ArrowLeft,Arrow
 const CHEAT_POW='ArrowUp,ArrowRight,ArrowLeft,ArrowDown,';
 const CHEAT_HIDE='ArrowUp,ArrowDown,ArrowRight,ArrowRight,ArrowLeft,ArrowLeft,ArrowUp,ArrowDown,ArrowDown,ArrowLeft,ArrowRight,';
 const CMD_HARD='ArrowRight,ArrowDown,ArrowLeft,ArrowUp,ArrowRight,ArrowDown,ArrowLeft,ArrowUp,';
+const WASD={KeyW:'ArrowUp',KeyA:'ArrowLeft',KeyS:'ArrowDown',KeyD:'ArrowRight'};
 let cmd='',hard=false,hardCyc=0,autoCam=0;
 addEventListener('keyup',e=>{keys[e.code]=0});
 // タイトル画面の「難易度コマンド」ボタン
@@ -545,7 +547,7 @@ function drawCmdTable(){
   L('→ ↓ ← ↑ → ↓ ← ↑',70,206,17);L('3',268,206,17,'#ff5050');
   L('10秒無敵と',315,196,12);L('5秒即死を繰り返す',315,210,12);L('画面が自動で上昇',315,224,12,'#ffb070');L('画面外に出たら即死',315,238,12,'#ff5050');
   r(60,250,VW-120,1,'rgba(143,192,255,.4)');
-  L('・矢印キーで入力 (タイトルでもゲーム中でもOK)',70,276,13);
+  L('・矢印キーか WASD で入力 (タイトルでもゲーム中でもOK)',70,276,12);
   L('・もう一度同じコマンドを打つと元に戻る',70,300,13);
   L('現在の難易度: ',70,332,15);L(hard?'3':'ふつう',190,332,15,hard?'#ff5050':'#7cf0a0');
   if(frame%60<40)L('クリック / ENTER で閉じる',VW/2,372,13,'#c8f8ff','center');
